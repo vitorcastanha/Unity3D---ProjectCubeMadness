@@ -21,7 +21,7 @@ public class BaseCharacter : PoolObject
     /// Calculates the health.
     /// </summary>
     /// <param name="deltaHealth">Delta health.</param>
-    virtual protected void CalculateHealth(float deltaHealth)
+    virtual public void CalculateHealth(float deltaHealth)
     {
         fHealth += deltaHealth;
         CalculateDead();

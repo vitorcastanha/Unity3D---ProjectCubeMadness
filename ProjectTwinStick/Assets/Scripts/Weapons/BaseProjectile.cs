@@ -33,7 +33,7 @@ public class BaseProjectile : PoolObject
         //deals damage
         if (enemy = col.GetComponent<BaseEnemy>())
         {
-            enemy.ModifyHealth(-fDamage); 
+            enemy.CalculateHealth(-fDamage); 
             CancelInvoke();
             CleanProjectile();
         }

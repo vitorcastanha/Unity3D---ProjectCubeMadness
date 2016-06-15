@@ -3,17 +3,6 @@ using System.Collections;
 
 public class EnemyZombie : BaseEnemy
 {
-    #region Designer Variables
-    [Header ("Searchers for player around this instance, in units")]
-    [SerializeField] private float fHuntingRadius = 20f;          //Look for player within this radius
-    [SerializeField] private float fCorpseLifeSpan = 3f;         //how long before corpse is cleaned from the scene
-    #endregion
-
-    #if UNITY_EDITOR
-    [Header ("Editor only behavior")]
-    public bool bEnableDebug;
-    #endif
-
     private enum ZombieStates
     {
         HUNTING,
@@ -23,25 +12,19 @@ public class EnemyZombie : BaseEnemy
         DEAD
     }
     private ZombieStates state;
-    private Animator anim;
 
-    private const float HUNT_PULSE_CD = 0.2f;               //Look for player every 0.2 seconds
-    private bool bHuntPulse;                                //When true, this unit will look for the player
-    private HeroCharacter hcTargetHero;                     //If it finds a hero, target it
-    private const float ATTACK_RANGE = 3f;                  //Change to attack state when target is this close
+    private const float ATTACK_DAMAGE_CD = 0.5f;            //Damages player twice a second when engaged
+    private const string ANIM_TRIGGER_DEAD = "dead";        //Animaion trigger parameter
+    private const string ANIM_BOOL_WALK = "walk";
+    private const string ANIM_BOOL_ATTACK_IN_RANGE = "attackRange";
+
+
+    private bool bAttackIsReady = true;
 
     protected override void Start()
     {
+        //if in debug mode, call OnSpawn ()
         base.Start();
-        anim = GetComponentInChildren<Animator>();
-
-        #if UNITY_EDITOR
-        if (bEnableDebug)
-        {
-            Debug.Log("Debug function: Start Coroutine", this.gameObject);
-            OnSpawn();
-        }
-        #endif
     }
 
     protected override void Update()
@@ -56,6 +39,14 @@ public class EnemyZombie : BaseEnemy
     /// </summary>
     private void ZombieStateController()
     {
+        anim.SetBool(ANIM_BOOL_ATTACK_IN_RANGE, false); //I'm using a bool instead of trigger because the attack has a "channeling" effect
+        anim.SetBool(ANIM_BOOL_WALK, false);
+
+        if (hcTargetHero == null && state != ZombieStates.HUNTING)
+        {
+            state = ZombieStates.HUNTING;
+        }
+
         switch (state)
         {
             case ZombieStates.HUNTING:
@@ -71,7 +62,7 @@ public class EnemyZombie : BaseEnemy
             case ZombieStates.CHASING:
                 {
                     navAgent.Resume();
-                    anim.SetBool("walk", true);
+                    anim.SetBool(ANIM_BOOL_WALK, true);
                     navAgent.SetDestination(hcTargetHero.transform.position);
                     //Change to attack when it reaches the player
                     if (CheckAttackRange())
@@ -82,7 +73,10 @@ public class EnemyZombie : BaseEnemy
             case ZombieStates.ATTACKING:
                 {
                     navAgent.Stop();
-                    //anim.SetTrigger("attack");
+                    anim.SetBool(ANIM_BOOL_ATTACK_IN_RANGE, true);
+
+                    if (bAttackIsReady)
+                        StartCoroutine(DealDamage(fDamage));
 
                     //Go back to looking for a victim if not in attack range anymore
                     if (!CheckAttackRange())
@@ -95,71 +89,23 @@ public class EnemyZombie : BaseEnemy
         }
     }
 
-    /// <summary>
-    /// Checks the attack range.
-    /// </summary>
-    /// <returns><c>true</c>, if attack is in range, <c>false</c> otherwise.</returns>
-    private bool CheckAttackRange()
+    //Deals damage to Heroes within range every cycle. ATTACK_DAMAGE_CD determines the cycle duration
+    //@param damage Damage done per ATTACK_DAMAGE_CD cycle.
+    private IEnumerator DealDamage(float damage)
     {
-        //If player died or the referrence was lost for some reason (invisibility?) return false
-        if (hcTargetHero == null)
-        {
-            return false;
-        }
-        return (Vector3.Distance(hcTargetHero.transform.position, transform.position) < ATTACK_RANGE);
-    }
+        float count = 0f;
+        hcTargetHero.CalculateHealth(-damage);
+        bAttackIsReady = false;
 
-    /// <summary>
-    /// Looks for player.
-    /// </summary>
-    private void LookForPlayer()
-    {
-        //Only check for player every so often to save resources
-        if (bHuntPulse)
-        {
-            Collider[] cols = Physics.OverlapSphere(transform.position, fHuntingRadius, PLAYER_LAYER);
-            float closestDistance = 9999f;
-            int index = 0;
-
-            //finds nearest player and target it
-            for (int i = 0; i < cols.Length; i++)
-            {
-                float dist = Vector3.Distance(cols[i].transform.position, transform.position);
-                if (dist < closestDistance)
-                {
-                    closestDistance = dist;
-                    index = i;
-                }
-            }
-            if (cols.Length == 0)
-                return;
-
-            try
-            {
-                hcTargetHero = cols[index].GetComponent<HeroCharacter>();
-            }
-            catch (System.Exception ex)
-            {
-                Debug.LogError("Object is using the PLAYER_LAYER without having the correct class attached.", cols[index].gameObject);
-                Debug.LogError(ex.Message);
-            }
-        }
-    }
-
-    /// <summary>
-    /// Cools down hunt pulse.
-    /// </summary>
-    /// <returns>The down hunt pulse.</returns>
-    private IEnumerator CoolDownHuntPulse()
-    {
-        float count = 0;
-        while (count < HUNT_PULSE_CD)
+        while (count < ATTACK_DAMAGE_CD)
         {
             count += Time.deltaTime;
             yield return null;
         }
-        bHuntPulse = true;
+
+        bAttackIsReady = true;
     }
+
 
     /// <summary>
     /// Checks if the enemy is dead.
@@ -168,32 +114,14 @@ public class EnemyZombie : BaseEnemy
     {
         if (bIsDead && state != ZombieStates.DEAD)
         {
-            anim.SetTrigger("dead");
+            anim.SetTrigger(ANIM_TRIGGER_DEAD);
             navAgent.enabled = false;
             state = ZombieStates.DEAD;
             StartCoroutine(DestroySelf(fCorpseLifeSpan));
             GetComponent<Collider>().enabled = false;
         }
     }
-
-    private IEnumerator DestroySelf(float delay = 0f)
-    {
-        float count = 0f;
-        while (count < delay)
-        {
-            count += Time.deltaTime;
-            yield return null;
-        }
-        #if UNITY_EDITOR
-        if (bEnableDebug)
-        {
-            Destroy(gameObject);
-            return false;
-        }
-        #endif
-        PoolManager.DeSpawn(gameObject);
-    }
-
+        
     public override void OnSpawn()
     {
         base.OnSpawn();
