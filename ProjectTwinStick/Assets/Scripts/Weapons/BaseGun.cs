@@ -4,11 +4,12 @@ using System.Collections;
 [RequireComponent (typeof(Animator))]
 public class BaseGun : Weapon
 {
+    private const string ANIM_TRIGGER_RECOIL = "recoil";
+
     #region Designer Variables
     [SerializeField] protected Transform tProjectileSpawn;
-    #endregion
-
     [SerializeField] protected float fShotsPerSecond = 2f;
+    #endregion
     protected bool bReadyToFire = true;
 
     private Animator anim;
@@ -41,7 +42,7 @@ public class BaseGun : Weapon
     /// <summary>
     /// Fire projectile.
     /// </summary>
-    public void Fire()
+    protected virtual void Fire()
     {
         //Spawn projectile
         BaseProjectile projectile = PoolManager.Spawn<BaseProjectile>(tProjectileSpawn) as BaseProjectile;
@@ -59,6 +60,7 @@ public class BaseGun : Weapon
         projectile.transform.localPosition = Vector3.zero;
         projectile.transform.localRotation = Quaternion.identity;
         projectile.transform.SetParent(null);
+        projectile.transform.localScale = Vector3.one;
     }
 
     protected IEnumerator CoolDown()
@@ -81,9 +83,9 @@ public class BaseGun : Weapon
         bReadyToFire = true;
     }
 
-    private void SetRecoilAnimation()
+    protected void SetRecoilAnimation()
     {
-        anim.SetTrigger("recoil");
+        anim.SetTrigger(ANIM_TRIGGER_RECOIL);
     }
 
 }

@@ -1,7 +1,12 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class EnemyRanged : BaseEnemy {
+public class EnemyRanged : BaseEnemy 
+{
+    private const string ANIM_TRIGGER_DEATH = "dead";
+    private const string ANIM_BOOL_CHASING = "chasing";
+    private const string ANIM_BOOL_ATTACKING = "inAttackRange";
+    private const string ANIM_BOOL_AIMING = "aiming";
 
     private enum RangedEnemyStates
     {
@@ -13,12 +18,11 @@ public class EnemyRanged : BaseEnemy {
     }
     private RangedEnemyStates state;
 
-    private bool bAttackIsReady = true;
-
     protected override void Start()
     {
         //if in debug mode, call OnSpawn ()
         base.Start();
+
     }
 
     protected override void Update()
@@ -33,7 +37,9 @@ public class EnemyRanged : BaseEnemy {
     /// </summary>
     private void StateController()
     {
-        //Set moving animation bool to false
+        //Set animation bools to false
+        anim.SetBool(ANIM_BOOL_CHASING, false);
+        anim.SetBool(ANIM_BOOL_ATTACKING, false);
 
         if (hcTargetHero == null && state != RangedEnemyStates.HUNTING)
         {
@@ -56,6 +62,8 @@ public class EnemyRanged : BaseEnemy {
                 {
                     navAgent.Resume();
                     //Set moving animation bool to true
+                    anim.SetBool(ANIM_BOOL_CHASING, true);
+
                     navAgent.SetDestination(hcTargetHero.transform.position);
 
                     //Change to attack when it reaches the player
@@ -68,11 +76,12 @@ public class EnemyRanged : BaseEnemy {
                 {
                     navAgent.Stop();
 
-                    if (bAttackIsReady)
-                        //Do attack
+                    transform.LookAt(new Vector3(hcTargetHero.transform.position.x, transform.position.y, hcTargetHero.transform.position.z));
 
-                    //Go back to looking for a victim if not in attack range anymore
-                    if (!CheckAttackRange())
+                    anim.SetBool(ANIM_BOOL_ATTACKING, true); 
+
+                    //Go back to looking for a victim if not in attack range anymore AND not currently preparing an attack
+                    if (!CheckAttackRange() && !anim.GetBool(ANIM_BOOL_AIMING))
                         state = RangedEnemyStates.HUNTING;
                 }
                 break;
@@ -90,6 +99,7 @@ public class EnemyRanged : BaseEnemy {
         if (bIsDead && state != RangedEnemyStates.DEAD)
         {
             //Play death animation
+            anim.SetTrigger(ANIM_TRIGGER_DEATH);
 
             //Disable agent
             navAgent.enabled = false;

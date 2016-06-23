@@ -128,7 +128,7 @@ public class BaseEnemy : BaseCharacter
         if (bEnableDebug)
         {
             Destroy(gameObject);
-            return false;
+            yield break;
         }
         #endif
         PoolManager.DeSpawn(gameObject);

@@ -3,6 +3,7 @@ using System.Collections;
 
 public class HeroAnimationController : MonoBehaviour
 {
+    private const string ANIM_BOOL_WALK = "walk";
     private Animator anim;
 
     private void Start()
@@ -22,6 +23,6 @@ public class HeroAnimationController : MonoBehaviour
     /// <param name="walk">If set to <c>true</c> walk.</param>
     public void SetWalkingAnimation(bool walk)
     {
-        anim.SetBool("walk", walk);
+        anim.SetBool(ANIM_BOOL_WALK, walk);
     }
 }

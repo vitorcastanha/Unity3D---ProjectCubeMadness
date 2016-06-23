@@ -44,7 +44,7 @@ public class PoolManager : MonoBehaviour
         }
     }
 
-    public static PoolObject Spawn <T>(Transform parent) where T : PoolObject
+    public static PoolObject Spawn <T>(Transform parent = null) where T : PoolObject
     {
         //spawn object and pull it out of dictionary stack
         Type type = typeof(T);

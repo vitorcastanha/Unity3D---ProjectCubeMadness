@@ -4,12 +4,14 @@ using System.Collections;
 public class BaseCharacter : PoolObject
 {
 
-    protected float fHealth = 100f;
+    protected float fHealth;
+    protected float fMaxHealth = 100f;
     protected bool bIsDead = false;
 
     virtual protected void Start()
     {
 	    //Base
+        fHealth = fMaxHealth;
     }
 
     virtual protected void Update()
@@ -55,5 +57,10 @@ public class BaseCharacter : PoolObject
     public float GetHealth()
     {
         return fHealth;
+    }
+
+    public float GetMaxHealth()
+    {
+        return fMaxHealth;
     }
 }
