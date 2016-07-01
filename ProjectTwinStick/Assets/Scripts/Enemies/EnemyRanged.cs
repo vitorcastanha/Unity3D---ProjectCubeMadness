@@ -112,6 +112,11 @@ public class EnemyRanged : BaseEnemy
     public override void OnSpawn()
     {
         base.OnSpawn();
+
+    }
+
+    private void OnEnable()
+    {
         state = RangedEnemyStates.HUNTING;
         StartCoroutine(CoolDownHuntPulse());
     }
@@ -120,5 +125,15 @@ public class EnemyRanged : BaseEnemy
     {
         base.OnDespawn();
         StopAllCoroutines();
+        ResetStats();
+    }
+
+    private void ResetStats()
+    {
+        fHealth = fMaxHealth;
+        state = RangedEnemyStates.HUNTING;
+        GetComponent<Collider>().enabled = true;
+        navAgent.enabled = true;
+        bIsDead = false;
     }
 }

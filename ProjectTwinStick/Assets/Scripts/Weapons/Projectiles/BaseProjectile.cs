@@ -39,7 +39,13 @@ public class BaseProjectile : PoolObject
 
     virtual protected void OnTriggerEnter(Collider col)
     {
+        if (col.tag == "Wall")
+        {
+            PoolManager.DeSpawn(gameObject);
+        }
+
         BaseCharacter bcCharacter;
+
         //deals damage
         if (owner == Owner.PLAYER_UNIT && (bcCharacter = col.GetComponent<BaseEnemy>()))
         {

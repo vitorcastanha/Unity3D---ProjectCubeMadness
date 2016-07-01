@@ -125,6 +125,10 @@ public class EnemyZombie : BaseEnemy
     public override void OnSpawn()
     {
         base.OnSpawn();
+    }
+
+    private void OnEnable()
+    {
         state = ZombieStates.HUNTING;
         StartCoroutine(CoolDownHuntPulse());
     }
@@ -133,6 +137,16 @@ public class EnemyZombie : BaseEnemy
     {
         base.OnDespawn();
         StopAllCoroutines();
+        ResetStats();
+    }
+
+    private void ResetStats()
+    {
+        fHealth = fMaxHealth;
+        state = ZombieStates.HUNTING;
+        bIsDead = false;
+        navAgent.enabled = true;
+        GetComponent<Collider>().enabled = true;
     }
 
 

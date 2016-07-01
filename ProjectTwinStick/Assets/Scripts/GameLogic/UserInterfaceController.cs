@@ -74,6 +74,10 @@ public class UserInterfaceController : MonoBehaviour
                 heartPieces[i].SetActive(false);
                 //spawn particle system and position it at the heart piece location
                 GameObject clone = PoolManager.Spawn<UIDamage>().gameObject;
+                if (clone == null)
+                {
+                    return;
+                }
                 clone.transform.position = heartPieces[i].transform.position;
                 clone.transform.LookAt(Camera.main.transform.position);
                 //camera shake

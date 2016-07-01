@@ -26,6 +26,10 @@ public class BaseCharacter : PoolObject
     virtual public void CalculateHealth(float deltaHealth)
     {
         fHealth += deltaHealth;
+        if (fHealth > fMaxHealth)
+        {
+            fHealth = fMaxHealth;
+        }
         CalculateDead();
     }
 

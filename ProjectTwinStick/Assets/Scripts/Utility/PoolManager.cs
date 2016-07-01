@@ -72,4 +72,15 @@ public class PoolManager : MonoBehaviour
         Type type = poolObj.GetType();
         poolObjects[type].Push(poolObj);                                //Push it back into the stack
     }
+
+    private IEnumerator TimerCountDown(float duration, GameObject go)
+    {
+        float count = 0f;
+        while (count < duration)
+        {
+            count += Time.deltaTime;
+            yield return null;
+        }
+        DeSpawn(go);
+    }
 }
