@@ -15,6 +15,7 @@ public class InputHandler : MonoBehaviour
         public static event OnMoveAction onMove;
         public static event OnAimAction onAim;
         private const float rotationThreshold = 0.0625f;
+        private const float moveThreshold = 0.0625f;
 
         private void Update()
         {
@@ -24,10 +25,7 @@ public class InputHandler : MonoBehaviour
             }
 
             Vector3 moveVector = new Vector3(CubeInputs.GeHorizontalMovement, 0f, CubeInputs.GeVerticalMovement);
-            if (moveVector.sqrMagnitude != 0f)
-            {
-                onMove(moveVector);
-            }
+            onMove(moveVector);
 
             Vector3 rotationVector = Vector3.Normalize(new Vector3(CubeInputs.GetHorizontalAimDirection, 0.0f, CubeInputs.GetVerticalAimDirection));
             //Makes sure player is activally trying to rotate
@@ -48,8 +46,15 @@ public class InputHandler : MonoBehaviour
         {
             if (CubeInputs.IsPausing)
             {
+                GameState.IsPaused = !GameState.IsPaused;
                 onPause();
             }
         }
+    }
+
+    private void Awake()
+    {
+        gameObject.AddComponent<PlayerController>();
+        gameObject.AddComponent<MenuController>();
     }
 }

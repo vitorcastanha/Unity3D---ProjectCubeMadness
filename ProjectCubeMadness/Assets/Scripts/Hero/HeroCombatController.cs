@@ -27,8 +27,6 @@ public class HeroCombatController : MonoBehaviour
         {
             //Equip base gun.
         }
-        
-
     }
 
     /// <summary>
