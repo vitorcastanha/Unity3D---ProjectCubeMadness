@@ -1,12 +1,22 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+[RequireComponent(typeof(CharacterStateHandler))]
 public class BaseCharacter : PoolObject
 {
 
     protected float fHealth;
     protected float fMaxHealth = 100f;
     protected bool bIsDead = false;
+    private CharacterStateHandler stateHandler;
+    public CharacterStateHandler StateHandler { get { return stateHandler; } }
+
+    protected virtual void Awake()
+    {
+        stateHandler = GetComponent<CharacterStateHandler>();
+        stateHandler.onTakeDamage += CalculateHealth;
+        stateHandler.onHealing += CalculateHealth;
+    }
 
     virtual protected void Start()
     {
@@ -22,8 +32,8 @@ public class BaseCharacter : PoolObject
     /// <summary>
     /// Calculates the health.
     /// </summary>
-    /// <param name="deltaHealth">Delta health.</param>
-    virtual public void CalculateHealth(float deltaHealth)
+    /// <param name="deltaHealth">Delta health. Can be positive or negative.</param>
+    virtual protected void CalculateHealth(float deltaHealth)
     {
         fHealth += deltaHealth;
         if (fHealth > fMaxHealth)

@@ -59,7 +59,7 @@ public class BaseProjectile : PoolObject
 
     private void ProjectileHit(BaseCharacter targetCharacter)
     {
-        targetCharacter.CalculateHealth(-fDamage); 
+        targetCharacter.StateHandler.DamageCharacter(fDamage); 
         CancelInvoke();
         CleanProjectile();
     }

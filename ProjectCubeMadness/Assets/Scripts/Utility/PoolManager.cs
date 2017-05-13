@@ -12,7 +12,10 @@ public class PoolManager : MonoBehaviour
     //make sure to run before Start gets called
     private void Awake()
     {
+        //DontDestroyOnLoad only works on the root gameObject
+        transform.SetParent(null);
         DontDestroyOnLoad(this.gameObject);
+
         thisTransform = transform;
         poolObjects = new Dictionary<Type, Stack<PoolObject>>();
         PreLoadAll();
