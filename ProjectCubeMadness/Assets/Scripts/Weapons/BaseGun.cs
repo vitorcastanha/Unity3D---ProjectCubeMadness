@@ -51,7 +51,7 @@ public class BaseGun : Weapon
             return;
 
         SetProjectilePosition(projectile, Vector3.zero);
-        //Do animtion
+        //Do animation
         SetRecoilAnimation();
     }
 
@@ -65,20 +65,15 @@ public class BaseGun : Weapon
 
     protected IEnumerator CoolDown()
     {
-        float count = 0;
-
         if (fShotsPerSecond <= 0f)
         {
             fShotsPerSecond = 0.01f;
+            Debug.LogError("The shots per second in " + gameObject.name + " are set to less than 0 per second. Defaulted to 0.01 shots/s.");
         }
 
-        float coolDownTime = 1 / fShotsPerSecond;
+        float coolDownTime = 1f / fShotsPerSecond;
 
-        while (count < coolDownTime)
-        {
-            count += Time.deltaTime;
-            yield return null;
-        }
+        yield return new WaitForSeconds(coolDownTime);
 
         bReadyToFire = true;
     }

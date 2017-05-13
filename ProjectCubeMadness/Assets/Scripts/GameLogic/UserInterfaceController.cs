@@ -12,13 +12,19 @@ public class UserInterfaceController : MonoBehaviour
     [System.Serializable]
     class UIControl
     {
+        [Header("Life points")]
+        public Canvas hpCanvas;
         public GameObject[] heartContainers;
         public GameObject damageParticle;               //Spawns on the hearts when they get destroyed
         public Image bloodOverlay;
+
+        [Header("Menu")]
+        public GameObject pauseGame;
     }
     [SerializeField] UIControl uiControl;
 
     List<GameObject> heartPieces;
+    private bool gameIsPaused;
 
     void Awake()
     {
@@ -48,11 +54,24 @@ public class UserInterfaceController : MonoBehaviour
             }
         }
 
+        //InputHandler.MenuController.onPause += 
     }
 	
-    void Update()
+    void ShowPause()
     {
-        
+        gameIsPaused = !gameIsPaused;
+        if (gameIsPaused)
+        {
+            Time.timeScale = 0.0000000001f;
+            uiControl.pauseGame.SetActive(true);
+            uiControl.hpCanvas.gameObject.SetActive(false);
+        }
+        else
+        {
+            Time.timeScale = 1f;
+            uiControl.pauseGame.SetActive(false);
+            uiControl.hpCanvas.gameObject.SetActive(true);
+        }
     }
 
     public void UpdateHealth()

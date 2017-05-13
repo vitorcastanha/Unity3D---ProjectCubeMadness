@@ -19,12 +19,8 @@ public class HeroMovementController : MonoBehaviour {
     {
         rb = GetComponent<Rigidbody>();
         animController = GetComponent<HeroAnimationController>();
-    }
-
-    private void Update()
-    {
-        CalculateMovement();
-        CalculateRotation();
+        InputHandler.PlayerController.onMove += CalculateMovement;
+        InputHandler.PlayerController.onAim += CalculateRotation;
     }
 
     private void FixedUpdate()
@@ -33,36 +29,21 @@ public class HeroMovementController : MonoBehaviour {
         ApplyAnimation(v3Movement.magnitude);
     }
 
-    private void CalculateMovement()
+    private void CalculateMovement(Vector3 moveVector)
     {
-        float horMove = Input.GetAxis("Horizontal.LStick");
-        float verMove = Input.GetAxis("Vertical.LStick");
-
-        //move relative to the world position to get the twin stick motion
-        Vector3 moveVector = new Vector3(horMove,0.0f,verMove);
         v3Movement = moveVector * speed;
     }
 
-    private void CalculateRotation()
+    private void CalculateRotation(Vector3 rotationVector)
     {
-        float horRotation = Input.GetAxis("Horizontal.RStick");
-        float verRotation = Input.GetAxis("Vertical.RStick");
-
-        //Calculate the new forward vector
-        Vector3 rotationVector = Vector3.Normalize(new Vector3(horRotation, 0.0f, verRotation));
-
-        //Makes sure player is activally trying to rotate
-        if (rotationVector.magnitude > 0.25f)
+        Quaternion newRotation = new Quaternion();
+        newRotation.SetLookRotation(rotationVector);
+        //Lerp in constant speed towards the new forward vector
+        float distance = Quaternion.Angle(newRotation, transform.localRotation);
+        if (distance != 0f) //stop division by zero
         {
-            Quaternion newRotation = new Quaternion();
-            newRotation.SetLookRotation(rotationVector);
-            //Lerp in constant speed towards the new forward vector
-            float distance = Quaternion.Angle(newRotation, transform.localRotation);
-            if (distance != 0f) //stop division by zero
-            {
-                float t = turnSpeed / distance;
-                qRotation = Quaternion.Lerp(transform.localRotation, newRotation, t);
-            }
+            float t = turnSpeed / distance;
+            qRotation = Quaternion.Lerp(transform.localRotation, newRotation, t);
         }
     }
 

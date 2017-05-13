@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-[RequireComponent(typeof(NavMeshAgent))]
+[RequireComponent(typeof(UnityEngine.AI.NavMeshAgent))]
 /// <summary>
 /// Base enemy.
 /// This class is used as a base for every Enemy class.
@@ -31,12 +31,12 @@ public class BaseEnemy : BaseCharacter
     protected const int PLAYER_LAYER = 256;                        //Layer 08
 
     protected Animator anim;
-    protected NavMeshAgent navAgent;
+    protected UnityEngine.AI.NavMeshAgent navAgent;
 
     protected override void Start()
     {
         base.Start();
-        navAgent = GetComponent<NavMeshAgent>();
+        navAgent = GetComponent<UnityEngine.AI.NavMeshAgent>();
         anim = GetComponentInChildren<Animator>();
 
         #if UNITY_EDITOR

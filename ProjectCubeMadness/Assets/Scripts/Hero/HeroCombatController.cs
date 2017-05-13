@@ -14,7 +14,7 @@ public class HeroCombatController : MonoBehaviour
     {
         if (!tWeaponSocket)
         {
-            Debug.LogError("Missing Weapon Socket refference on Hero character.");
+            Debug.LogError("Missing Weapon Socket reference on Hero character.");
             Debug.Break();
         }
 
@@ -27,16 +27,8 @@ public class HeroCombatController : MonoBehaviour
         {
             //Equip base gun.
         }
-    }
+        
 
-    private void Update()
-    {
-        float fireAxis = Input.GetAxis("Fire");
-
-        if (fireAxis < -0.3f)
-        {
-            wCurrentWeapon.DoAttack();
-        }
     }
 
     /// <summary>
@@ -54,6 +46,7 @@ public class HeroCombatController : MonoBehaviour
         wCurrentWeapon.transform.position = tWeaponSocket.position;
         wCurrentWeapon.transform.parent = tWeaponSocket;
         wCurrentWeapon.transform.localRotation = Quaternion.identity;
+        InputHandler.PlayerController.onShoot += wCurrentWeapon.DoAttack;
     }
         
 }

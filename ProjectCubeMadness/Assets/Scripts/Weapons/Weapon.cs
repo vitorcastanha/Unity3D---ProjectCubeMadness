@@ -8,6 +8,7 @@ using System.Collections;
 /// </summary>
 public class Weapon : MonoBehaviour
 {
+
     virtual public void DoAttack()
     {
         //Base
