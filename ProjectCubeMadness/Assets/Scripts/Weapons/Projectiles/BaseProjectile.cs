@@ -17,6 +17,7 @@ public class BaseProjectile : PoolObject
     public Owner owner;
 
     protected Rigidbody rb;                         //Guarantee that Trigger functions will work
+    private Vector3 moveDir;
 
     public override void OnSpawn()
     {
@@ -26,6 +27,7 @@ public class BaseProjectile : PoolObject
         {
             SpringArm.GetInstance().DoShakeCamera(0.1f, 0.1f);
         }
+        moveDir = transform.forward; //default value if we fail to set it in the weapon
     }
 
 	virtual protected void Start () 
@@ -35,14 +37,19 @@ public class BaseProjectile : PoolObject
 	
 	virtual protected void Update () 
     {
-        rb.velocity = transform.forward * fSpeed;
+        rb.velocity = moveDir * fSpeed;
 	}
+
+    public virtual void SetMoveDirection(Vector3 newDir)
+    {
+        moveDir = newDir;
+    }
 
     virtual protected void OnTriggerEnter(Collider col)
     {
         if (col.tag == "Wall")
         {
-            PoolManager.DeSpawn(gameObject);
+            CleanProjectile();
         }
 
         BaseCharacter bcCharacter;
@@ -65,7 +72,7 @@ public class BaseProjectile : PoolObject
             DamageHero(targetCharacter as HeroCharacter);
         else
             targetCharacter.StateHandler.DamageCharacter(fDamage);
-        CancelInvoke();
+        
         CleanProjectile();
     }
 
@@ -77,6 +84,7 @@ public class BaseProjectile : PoolObject
     //Clean the scene
     private void CleanProjectile()
     {
+        CancelInvoke();
         PoolManager.DeSpawn(this.gameObject);
     }
 }

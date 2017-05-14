@@ -15,8 +15,9 @@ public class BaseEnemyGun : BaseGun {
         if (projectile == null)
             return;
 
-        SetProjectilePosition(projectile, Vector3.zero);
-        //Do animtion
+        SetProjectileInitPosition(projectile, Vector3.zero);
+        projectile.SetMoveDirection(CalculateParallelToFloorVector(projectile));
+        //Do animation
         SetRecoilAnimation();
     }
 }

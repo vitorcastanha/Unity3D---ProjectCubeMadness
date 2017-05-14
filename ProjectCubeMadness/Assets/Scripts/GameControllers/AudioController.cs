@@ -11,11 +11,13 @@ public class AudioController : MonoBehaviour {
     public Clip[] backgroundMusic;
     public Clip pauseClip;
     public Clip healingClip;
+    public Clip heroHurtClip;
 
     private void Start()
     {
         InputHandler.MenuController.onPause += PlayPause;
         HeroCharacter.GetInstance().HeroStateHandler.onHealingCallBack += PlayHealing;
+        HeroCharacter.GetInstance().HeroStateHandler.onTakeDamageCallBack += PlayGettingHit; 
     }
 
     private void PlayPause()
@@ -30,5 +32,10 @@ public class AudioController : MonoBehaviour {
     private void PlayHealing()
     {
         uiSource.PlayOneShot(healingClip, 2f);
+    }
+
+    private void PlayGettingHit()
+    {
+        uiSource.PlayOneShot(heroHurtClip, 2f);
     }
 }

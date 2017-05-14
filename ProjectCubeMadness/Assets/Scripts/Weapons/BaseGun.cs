@@ -11,6 +11,7 @@ public class BaseGun : Weapon
     [SerializeField] protected float fShotsPerSecond = 2f;
     #endregion
     protected bool bReadyToFire = true;
+    private const int FLOOR_LAYER = 1 << 9;
 
     private Animator anim;
 
@@ -50,12 +51,26 @@ public class BaseGun : Weapon
         if (projectile == null)
             return;
 
-        SetProjectilePosition(projectile, Vector3.zero);
+        SetProjectileInitPosition(projectile, Vector3.zero);
+        projectile.SetMoveDirection(CalculateParallelToFloorVector(projectile));
         //Do animation
         SetRecoilAnimation();
     }
 
-    protected void SetProjectilePosition(BaseProjectile projectile, Vector3 pos)
+    protected Vector3 CalculateParallelToFloorVector(BaseProjectile projectile)
+    {
+        RaycastHit hit;
+        var didHit = Physics.Raycast(transform.position, Vector3.down, out hit, 100f, FLOOR_LAYER);
+        if (didHit)
+        {
+            var crossStep1 = Vector3.Cross(hit.normal, transform.forward);
+            return Vector3.Cross(crossStep1, hit.normal);
+        }
+        Debug.LogWarning("Floor layer not found when trying to calculate projectile direction.");
+        return projectile.transform.forward;
+    }
+
+    protected void SetProjectileInitPosition(BaseProjectile projectile, Vector3 pos)
     {
         projectile.transform.localPosition = Vector3.zero;
         projectile.transform.localRotation = Quaternion.identity;
