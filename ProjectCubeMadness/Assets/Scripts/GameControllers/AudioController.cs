@@ -10,19 +10,25 @@ public class AudioController : MonoBehaviour {
 
     public Clip[] backgroundMusic;
     public Clip pauseClip;
+    public Clip healingClip;
 
     private void Start()
     {
         InputHandler.MenuController.onPause += PlayPause;
+        HeroCharacter.GetInstance().StateHandler.onHealingCallBack += PlayHealing;
     }
 
     private void PlayPause()
     {
-        uiSource.clip = pauseClip;
-        uiSource.Play();
+        uiSource.PlayOneShot(pauseClip);
         if (GameState.IsPaused)
             musicSource.Pause();
         else
             musicSource.UnPause();
+    }
+
+    private void PlayHealing()
+    {
+        uiSource.PlayOneShot(healingClip, 2f);
     }
 }

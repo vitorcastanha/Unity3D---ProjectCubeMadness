@@ -4,6 +4,7 @@ using System.Collections;
 [RequireComponent (typeof(Collider))]
 public class PickUp : MonoBehaviour
 {
+
     protected virtual void Activate(HeroCharacter hero)
     {
         //Run pickup function
