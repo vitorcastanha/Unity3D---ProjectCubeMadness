@@ -23,7 +23,7 @@ public class CharacterStateHandler : MonoBehaviour
     /// Deals damage to the Character.
     /// </summary>
     /// <param name="damage">This value is always interpreted as negative.</param>
-    public void DamageCharacter(float damage)
+    public virtual void DamageCharacter(float damage)
     {
         if(onTakeDamage != null)
             onTakeDamage(Mathf.Abs(damage) * -1f);
@@ -35,7 +35,7 @@ public class CharacterStateHandler : MonoBehaviour
     /// Heals the Character.
     /// </summary>
     /// <param name="healing">This value is always interpreted as positive.</param>
-    public void HealCharacter(float healing)
+    public virtual void HealCharacter(float healing)
     {
         if(onHealing != null)
             onHealing(Mathf.Abs(healing));

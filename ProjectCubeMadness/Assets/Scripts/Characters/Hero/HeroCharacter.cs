@@ -12,18 +12,23 @@ using System.Collections;
 [RequireComponent(typeof(HeroMovementController))]
 [RequireComponent(typeof(HeroAnimationController))]
 [RequireComponent(typeof(HeroCombatController))]
+[RequireComponent(typeof(HeroCharacterStateHandler))]
 
 public class HeroCharacter : BaseCharacter
 {
-    static HeroCharacter instance;
-
+    private static HeroCharacter instance;
+    private HeroCharacterStateHandler heroStateHandler;
+    
     #region Designer Variables
     [SerializeField]private int maxHeartPiecesCount = 3;
+    [SerializeField]private float imunityDuration = 1f;
     #endregion
 
     protected override void Awake()
     {
-        base.Awake();
+        heroStateHandler = GetComponent<HeroCharacterStateHandler>();
+        heroStateHandler.onTakeDamage += CalculateHealth;
+        heroStateHandler.onHealing += CalculateHealth;
         instance = this;
         fMaxHealth = maxHeartPiecesCount * 30;
     }
@@ -74,5 +79,8 @@ public class HeroCharacter : BaseCharacter
             return CurrentHealth / 3;
         }
     }
+
+    public float ImunityDuration { get{ return imunityDuration; } }
+    public HeroCharacterStateHandler HeroStateHandler { get { return heroStateHandler; } }
     #endregion
 }

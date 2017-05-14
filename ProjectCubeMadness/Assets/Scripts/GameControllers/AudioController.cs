@@ -15,7 +15,7 @@ public class AudioController : MonoBehaviour {
     private void Start()
     {
         InputHandler.MenuController.onPause += PlayPause;
-        HeroCharacter.GetInstance().StateHandler.onHealingCallBack += PlayHealing;
+        HeroCharacter.GetInstance().HeroStateHandler.onHealingCallBack += PlayHealing;
     }
 
     private void PlayPause()

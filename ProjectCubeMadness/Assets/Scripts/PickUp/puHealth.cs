@@ -14,7 +14,7 @@ public class puHealth : PickUp {
     protected override void Activate(HeroCharacter hero)
     {
         base.Activate(hero);
-        hero.StateHandler.HealCharacter(30f);
+        hero.HeroStateHandler.HealCharacter(30f);
     }
 
     protected override void VisualFeedBack(HeroCharacter hero)

@@ -94,7 +94,7 @@ public class EnemyZombie : BaseEnemy
     private IEnumerator DealDamage(float damage)
     {
         float count = 0f;
-        hcTargetHero.StateHandler.DamageCharacter(damage);
+        hcTargetHero.HeroStateHandler.DamageCharacter(damage);
         bAttackIsReady = false;
 
         while (count < ATTACK_DAMAGE_CD)

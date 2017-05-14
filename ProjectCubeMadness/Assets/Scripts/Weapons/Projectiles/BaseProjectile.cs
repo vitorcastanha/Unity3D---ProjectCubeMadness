@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System;
 using System.Collections;
 
 [RequireComponent (typeof(Rigidbody))]
@@ -49,19 +50,28 @@ public class BaseProjectile : PoolObject
         //deals damage
         if (owner == Owner.PLAYER_UNIT && (bcCharacter = col.GetComponent<BaseEnemy>()))
         {
-            ProjectileHit(bcCharacter);
+            ProjectileHit<BaseEnemy>(bcCharacter as BaseEnemy);
         }
         else if(owner == Owner.ENEMY_UNIT && (bcCharacter = col.GetComponent<HeroCharacter>()))
         {
-            ProjectileHit(bcCharacter);
+            ProjectileHit<HeroCharacter>(bcCharacter as HeroCharacter);
         }
     }
 
-    private void ProjectileHit(BaseCharacter targetCharacter)
+    private void ProjectileHit<T>(T targetCharacter) where T : BaseCharacter
     {
-        targetCharacter.StateHandler.DamageCharacter(fDamage); 
+        Type type = typeof(T);
+        if (type == typeof(HeroCharacter))
+            DamageHero(targetCharacter as HeroCharacter);
+        else
+            targetCharacter.StateHandler.DamageCharacter(fDamage);
         CancelInvoke();
         CleanProjectile();
+    }
+
+    private void DamageHero(HeroCharacter hero)
+    {
+        hero.HeroStateHandler.DamageCharacter(fDamage);
     }
         
     //Clean the scene

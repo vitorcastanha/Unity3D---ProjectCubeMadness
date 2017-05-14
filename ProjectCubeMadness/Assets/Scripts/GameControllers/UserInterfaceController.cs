@@ -31,9 +31,9 @@ public class UserInterfaceController : MonoBehaviour
 
     void BindToHandlers()
     {
-        HeroCharacter.GetInstance().StateHandler.onTakeDamageCallBack += UpdateHealth;
-        HeroCharacter.GetInstance().StateHandler.onTakeDamageCallBack += DamageCameraShake;
-        HeroCharacter.GetInstance().StateHandler.onHealingCallBack += UpdateHealth;
+        HeroCharacter.GetInstance().HeroStateHandler.onTakeDamageCallBack += UpdateHealth;
+        HeroCharacter.GetInstance().HeroStateHandler.onTakeDamageCallBack += DamageCameraShake;
+        HeroCharacter.GetInstance().HeroStateHandler.onHealingCallBack += UpdateHealth;
         InputHandler.MenuController.onPause += ShowPause;
     }
 
